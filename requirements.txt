@@ -1,3 +1,4 @@
+torch==1.10.2
 tqdm
 paho-mqtt~=1.6.1
 dadata
