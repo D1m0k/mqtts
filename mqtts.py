@@ -49,7 +49,10 @@ def subscribe(client: mqtt_client):
         try:
             print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic", flush=True)
             text = data['text']
-            provider = data['provider']
+            if 'provider' in data:
+                provider = data['provider']
+            else:
+                provider = 'default'
             hashtext = hashlib.md5(text.encode())
             hashfile = hashtext.hexdigest()
             prefix = '/sounds/'
@@ -74,7 +77,7 @@ def subscribe(client: mqtt_client):
 
 
 def normalize(text_to_normalize, provider):
-    if provider == 'top-delivery':
+    if provider == 'top-delivery' or provider == 'default':
         if re.search(r'Стоимостью', text_to_normalize):
             pricestring = re.search(r'Стоимостью (\d+)', text_to_normalize)
             print('Recived price:', flush=True)
