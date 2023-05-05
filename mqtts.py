@@ -10,6 +10,7 @@ import traceback
 from dadata import Dadata
 from normalizer import Normalizer
 from pathlib import Path
+from random import randint
 
 token = os.environ.get("DADATA_TOKEN")
 secret = os.environ.get("DADATA_SECRET")
@@ -20,7 +21,8 @@ port = 1883
 topic = "textToSpeech"
 outtopic = "textToSpeechRes"
 # generate client ID with pub prefix randomly
-client_id = 'CallBot'
+randint(100000, 999999)
+client_id = f'CallBot{randint}'
 
 
 # username = 'emqx'
@@ -230,7 +232,6 @@ def run():
     client = connect_mqtt()
     subscribe(client)
     client.loop_forever()
-
 
 def get_date(date):
     day_list = ['первого', 'второго', 'третьего', 'четвёртого',
