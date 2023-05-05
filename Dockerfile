@@ -1,5 +1,5 @@
 FROM docker.io/bitnami/pytorch:latest
-RUN pip install -r requirements.txt
 WORKDIR /app
 COPY . .
+RUN pip install -r requirements.txt
 CMD ["./mqtt_tts.py"]
