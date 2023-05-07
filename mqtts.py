@@ -77,85 +77,24 @@ def subscribe(client: mqtt_client):
 
 
 def normalize(text_to_normalize, provider):
-    if provider == 'top-delivery' or provider == 'default':
+    if provider == 'top-delivery' or provider == 'default' or provider == 'b2cpl':
         if re.search(r'Стоимостью', text_to_normalize):
-            pricestring = re.search(r'Стоимостью (\d+)', text_to_normalize)
+            pricestring = re.search(r'Стоимостью (\d+)', text_to_normalize) if re.search(r'Стоимостью (\d+)', text_to_normalize) else False
             print('Recived price:', flush=True)
             print(text_to_normalize, flush=True)
-            price = pricestring.groups([1])
-            rub = int(price[0])
-            rubs = 'рублей'
-            if rub % 10 == 1:
-                rubs = 'рубль'
-    
-            if 2 <= rub % 10 <= 4:
-                rubs = 'рубля'
-    
-            text_to_normalize = re.sub(r'Стоимостью (\d+)', "Стоимостью {} {}".format(rub, rubs), text_to_normalize)
-            print('Normalised price:', flush=True)
-            print(text_to_normalize, flush=True)
-    
-        if re.search(r'(\d+\.\d+)\.\d+', text_to_normalize):
-            datestring = re.findall(r'(\d+.\d+).\d+', text_to_normalize)
-            print(f'Recived date in string: {text_to_normalize}')
-            if len(datestring) > 1:
-                date_begin = get_date(datestring[0])
-                date_end = get_date_new(datestring[1])
-                text_to_normalize = re.sub(r'с (\d+.\d+).\d+\sгода', f"с {date_begin}", text_to_normalize)
-                text_to_normalize = re.sub(r'по (\d+.\d+).\d+\sгода', f"по {date_end}", text_to_normalize)
-            else:
-                date_begin = get_date(datestring[0])
-                text_to_normalize = re.sub(r'(\d+.\d+).\d+\sгода', f" {date_begin}", text_to_normalize)
-    
-            print(f'Normalised date: {text_to_normalize}')
-    
-        if re.search(r'^Адрес доставки.*', text_to_normalize):
-            print('Recived address:', flush=True)
-            print(text_to_normalize, flush=True)
-            result = dadata.clean("address", text_to_normalize)
-            if result['city'] is None:
-                address = f"Адрес доставки: {result['region_type_full']} {result['region']} {result['street_type_full']} {result['street']} {result['house_type_full']} {result['house']} {result['flat_type_full']} {result['flat']}"
-            else:
-                address = f"Адрес доставки: {result['city_type_full']} {result['city']} {result['street_type_full']} {result['street']} {result['house_type_full']} {result['house']} {result['flat_type_full']} {result['flat']}"
-    
-            address = address.replace('None', '')
-            text_to_normalize = re.sub(r'\s\s+', ' ', address)
-            text_to_normalize = re.sub(r'(\d+)\/(\d+)', r'\1 дробь \2', address)
-            print('normalized address:', flush=True)
-            print(text_to_normalize, flush=True)
-    
-        if re.search(r'.*\d.*', text_to_normalize):
-            print('Recived text with digits:', flush=True)
-            print(text_to_normalize, flush=True)
-            torch.set_num_threads(os.cpu_count())
-            norm = Normalizer()
-            normtext = norm.norm_text(text_to_normalize)
-            print('normalized text with digits:', flush=True)
-            print(normtext, flush=True)
-            return normtext
-        else:
-            print('Recived text:', flush=True)
-            print(text_to_normalize, flush=True)
-            normtext = text_to_normalize
-            return normtext
+            if pricestring:
+                price = pricestring.groups([1])
+                rub = int(price[0])
+                rubs = 'рублей'
+                if rub % 10 == 1:
+                    rubs = 'рубль'
 
-    if provider == 'b2cpl':
-        if re.search(r'Стоимостью', text_to_normalize):
-            pricestring = re.search(r'Стоимостью (\d+)', text_to_normalize)
-            print('Recived price:', flush=True)
-            print(text_to_normalize, flush=True)
-            price = pricestring.groups([1])
-            rub = int(price[0])
-            rubs = 'рублей'
-            if rub % 10 == 1:
-                rubs = 'рубль'
+                if 2 <= rub % 10 <= 4:
+                    rubs = 'рубля'
 
-            if 2 <= rub % 10 <= 4:
-                rubs = 'рубля'
-
-            text_to_normalize = re.sub(r'Стоимостью (\d+)', "Стоимостью {} {}".format(rub, rubs), text_to_normalize)
-            print('Normalised price:', flush=True)
-            print(text_to_normalize, flush=True)
+                text_to_normalize = re.sub(r'Стоимостью (\d+)', "Стоимостью {} {}".format(rub, rubs), text_to_normalize)
+                print('Normalised price:', flush=True)
+                print(text_to_normalize, flush=True)
 
         if re.search(r'(\d+\.\d+)\.\d+', text_to_normalize):
             datestring = re.findall(r'(\d+.\d+).\d+', text_to_normalize)
@@ -167,7 +106,7 @@ def normalize(text_to_normalize, provider):
                 text_to_normalize = re.sub(r'по (\d+.\d+).\d+\sгода', f"по {date_end}", text_to_normalize)
             else:
                 date_begin = get_date(datestring[0])
-                text_to_normalize = re.sub(r'(\d+.\d+).\d+\sгода', f" {date_begin}", text_to_normalize)
+                text_to_normalize = re.sub(r'(\d+.\d+).\d+\sгода', f" {date_begin} года", text_to_normalize)
 
             print(f'Normalised date: {text_to_normalize}')
 
@@ -180,9 +119,9 @@ def normalize(text_to_normalize, provider):
             else:
                 address = f"Адрес доставки: {result['city_type_full']} {result['city']} {result['street_type_full']} {result['street']} {result['house_type_full']} {result['house']} {result['flat_type_full']} {result['flat']}"
 
-            address = address.replace('None', '')
-            text_to_normalize = re.sub(r'\s\s+', ' ', address)
-            text_to_normalize = re.sub(r'(\d+)\/(\d+)', r'\1 дробь \2', address)
+            text_to_normalize = address.replace('None', '')
+            text_to_normalize = re.sub(r'\s\s+', ' ', text_to_normalize)
+            text_to_normalize = re.sub(r'(\d+)/(\d+)', r'\1 дробь \2', text_to_normalize)
             print('normalized address:', flush=True)
             print(text_to_normalize, flush=True)
 
@@ -200,13 +139,12 @@ def normalize(text_to_normalize, provider):
             print(text_to_normalize, flush=True)
             normtext = text_to_normalize
             return normtext
-        
     else:
-            print('Recived text:', flush=True)
-            print(text_to_normalize, flush=True)
-            normtext = text_to_normalize
-            return normtext
-        
+        print('Recived text:', flush=True)
+        print(text_to_normalize, flush=True)
+        normtext = text_to_normalize
+        return normtext
+
 
 def gensound(text, save_path):
     path = Path(__file__).parent.absolute()
@@ -223,7 +161,7 @@ def gensound(text, save_path):
     speaker = 'xenia'
     put_accent = True
     put_yo = True
-    audio_paths = model.save_wav(text=text, speaker=speaker, sample_rate=sample_rate, put_accent=put_accent,
+    model.save_wav(text=text, speaker=speaker, sample_rate=sample_rate, put_accent=put_accent,
                                  put_yo=put_yo, audio_path=save_path)
     return save_path
 
@@ -241,6 +179,7 @@ def run():
     client = connect_mqtt()
     subscribe(client)
     client.loop_forever()
+
 
 def get_date(date):
     day_list = ['первого', 'второго', 'третьего', 'четвёртого',
