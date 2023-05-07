@@ -17,7 +17,7 @@ secret = os.environ.get("DADATA_SECRET")
 dadata = Dadata(token, secret)
 
 broker = os.environ.get("HOST", "localhost")
-port = os.environ.get("BROKER_PORT", 1883)
+port = int(os.environ.get("BROKER_PORT", 1883))
 topic = "textToSpeech"
 outtopic = "textToSpeechRes"
 # generate client ID with pub prefix randomly
