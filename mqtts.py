@@ -201,6 +201,12 @@ def normalize(text_to_normalize, provider):
             normtext = text_to_normalize
             return normtext
         
+    else:
+            print('Recived text:', flush=True)
+            print(text_to_normalize, flush=True)
+            normtext = text_to_normalize
+            return normtext
+        
 
 def gensound(text, save_path):
     path = Path(__file__).parent.absolute()
