@@ -1,10 +1,13 @@
 import re
+import os
 import warnings
 import torch
 from string import printable, punctuation
 from pathlib import Path
 path = Path(__file__).parent.absolute()
 modelpath=f'{path}/jit_s2s.pt'
+if not os.path.isfile(modelpath):
+    torch.hub.download_url_to_file('https://github.com/snakers4/russian_stt_text_normalization/raw/master/jit_s2s.pt', modelpath)
 class Normalizer:
     def __init__(self,
                  device='cpu',
