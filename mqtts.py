@@ -21,8 +21,8 @@ port = 1883
 topic = "textToSpeech"
 outtopic = "textToSpeechRes"
 # generate client ID with pub prefix randomly
-randint(100000, 999999)
-client_id = f'CallBot{randint}'
+cbid = randint(100000, 999999)
+client_id = f'CallBot{cbid}'
 
 
 # username = 'emqx'
