@@ -109,7 +109,7 @@ def normalize(text_to_normalize, provider):
                 text_to_normalize = re.sub(r'по (\d+.\d+).\d+\sгода', f"по {date_end}", text_to_normalize)
             else:
                 date_begin = get_date(datestring[0])
-                text_to_normalize = re.sub(r'(\d+.\d+).\d+\sгода', f" {date_begin} года", text_to_normalize)
+                text_to_normalize = re.sub(r'(\d+.\d+).\d+\sгода', f"{date_begin} ", text_to_normalize)
 
             print(f'Normalised date: {text_to_normalize}')
 
