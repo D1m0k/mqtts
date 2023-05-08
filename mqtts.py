@@ -49,17 +49,20 @@ def subscribe(client: mqtt_client):
         try:
             print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic", flush=True)
             text = data['text']
+            astertext = f'"{text}"'
             if 'provider' in data:
                 provider = data['provider']
             else:
                 provider = 'default'
             hashtext = hashlib.md5(text.encode())
             hashfile = hashtext.hexdigest()
+            hashastertext = hashlib.md5(astertext.encode())
+            hashasterfile = hashastertext.hexdigest()
             prefix = '/sounds/'
             wavfile = f'{prefix}{hashfile}.wav'
-            filename = f'{prefix}{hashfile}'
-            print(wavfile, flush=True)
-            rungen(text, wavfile, provider)
+            asterwawfile = f'{prefix}{hashasterfile}.wav'
+            print(asterwawfile, flush=True)
+            rungen(text, asterwawfile, provider)
             data['ok'] = True
             data['status'] = "success"
             data['filename'] = hashfile
@@ -166,13 +169,13 @@ def gensound(text, save_path):
     return save_path
 
 
-def rungen(text, wavfile, provider):
-    if not os.path.isfile(wavfile):
+def rungen(text, asterwawfile, provider):
+    if not os.path.isfile(asterwawfile):
         text = normalize(text, provider)
-        filename = gensound(text, wavfile)
+        filename = gensound(text, asterwawfile)
         return filename
 
-    return wavfile
+    return asterwawfile
 
 
 def run():
