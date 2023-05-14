@@ -65,7 +65,7 @@ def subscribe(client: mqtt_client):
             rungen(text, asterwawfile, provider)
             data['ok'] = True
             data['status'] = "success"
-            data['filename'] = hashfile
+            data['filename'] = hashasterfile
             jsout = json.dumps(data, ensure_ascii=False)
             client.publish(outtopic, jsout)
         except:
