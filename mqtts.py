@@ -161,7 +161,7 @@ def gensound(text, save_path):
     model = torch.package.PackageImporter(local_file).load_pickle("tts_models", "model")
     model.to(device)
     sample_rate = 8000
-    speaker = 'xenia'
+    speaker = os.environ.get("SPEAKER", "xenia")
     put_accent = True
     put_yo = True
     model.save_wav(text=text, speaker=speaker, sample_rate=sample_rate, put_accent=put_accent,
